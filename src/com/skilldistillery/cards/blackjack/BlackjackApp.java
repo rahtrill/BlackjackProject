@@ -1,6 +1,6 @@
 package com.skilldistillery.cards.blackjack;
 
-import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,16 +10,21 @@ import com.skilldistillery.cards.common.Deck;
 public class BlackjackApp {
 
 	Scanner kb = new Scanner(System.in);
-	Deck deck = new Deck();
+	Deck deck;
+	BlackjackApp BA;
+	BlackjackUser user = new BlackjackUser();
+	BlackjackDealer dealer = new BlackjackDealer();
 
 	public static void main(String[] args) {
 
 		BlackjackApp BA = new BlackjackApp();
-		BA.launch();
+		BA.launch(BA);
 
 	}
 
-	public void launch() {
+	public void launch(BlackjackApp mainBA) {
+		
+		BA = mainBA;
 
 		boolean isPlaying = true;
 
@@ -27,58 +32,94 @@ public class BlackjackApp {
 		System.out.println();
 
 		while (isPlaying) {
+			
+			deck = new Deck();
 
-			List<Card> dealerHand = new ArrayList<>();
-			List<Card> userHand = new ArrayList<>();
+			dealer.addCard(deck);
+			dealer.addCard(deck);
 
-			deck.shuffle();
-			dealerHand.add(deck.dealCard());
-			deck.shuffle();
-			dealerHand.add(deck.dealCard());
+			user.addCard(deck);
+			user.addCard(deck);
+			
+			List<Card> dealerHand = dealer.getHand();
+			List<Card> userHand = user.getHand();
 
-			deck.shuffle();
-			userHand.add(deck.dealCard());
-			deck.shuffle();
-			userHand.add(deck.dealCard());
-
-
-			BlackjackApp BA = new BlackjackApp();
 			String dealerShows = ("Dealer hand: \n" + dealerHand.get(0) + " & [UNKNOWN CARD]");
-			userHand = BA.userCards(userHand, dealerShows);
-			dealerHand = BA.dealerCards(dealerHand);
+			userHand = BA.userCards(dealerShows);
+			dealerHand = BA.dealerCards();
 			
-			BA.compareCards(userHand, dealerHand);
+			BA.compareCards();
 			
-			isPlaying = false;
-
+			System.out.println("=====================");
+			System.out.println("= Continue playing? =");
+			System.out.println("= 1. Yes            =");
+			System.out.println("= 2. No             =");
+			System.out.println("=====================");
+			int answer = 0;
+			try {
+				answer = kb.nextInt();				
+			} catch (InputMismatchException e) {
+				System.err.println("Enter a valid number");
+			}
+			
+			switch(answer) {
+			
+			case 1:
+				
+				System.out.println();
+				System.out.println("Let's play again!");
+				dealer.emptyHand();
+				user.emptyHand();
+				break;
+				
+			case 2:
+				
+				System.out.println("Thank you for playng!");
+				isPlaying = false;
+				break;
+				
+			default:
+				
+				System.out.println("Input invalid. Defaulting to playing again.");
+				
+			}
 		}
 
 	}
 	
-	public List<Card> userCards(List<Card> cards, String dealer) {
+	public List<Card> userCards(String dealer) {
 		
-		BlackjackApp BA = new BlackjackApp();
-		int value = BA.getAllCardsValue(cards);
+		int value = user.allCardsValue();
 		
 		loop: while (value < 21) {
 			
+			System.out.println("====================================");
 			System.out.println(dealer);
+			System.out.println("====================================");
 			System.out.println();
+			System.out.println("====================================");
 			System.out.println("Your hand: ");
-			System.out.println(cards);
+			System.out.println(user.getHand());
 			System.out.println("Value = " + value);
+			System.out.println("====================================");
 			System.out.println();
-			System.out.println("Would you like to hit or stand?");
-			System.out.println("1. Hit");
-			System.out.println("2. Stand");
-			int answer = kb.nextInt();
+			System.out.println("===================================");
+			System.out.println("= Would you like to hit or stand? =");
+			System.out.println("= 1. Hit                          =");
+			System.out.println("= 2. Stand                        =");
+			System.out.println("===================================");
+			int answer = 0;
+			try {
+				answer = kb.nextInt();				
+			} catch (InputMismatchException e) {
+				System.err.println("Enter a valid number");
+			}
 			
 			switch (answer) {
 			
 			case 1:
 				
-				deck.shuffle();
-				cards.add(deck.dealCard());
+				user.addCard(deck);
 				break;
 				
 			case 2:
@@ -92,83 +133,69 @@ public class BlackjackApp {
 				
 			}
 		
-			value = BA.getAllCardsValue(cards);
+			value = user.allCardsValue();
 		}
 		
-		return cards;
+		return user.getHand();
 	}
 	
-	public List<Card> dealerCards(List<Card> cards) {
+	public List<Card> dealerCards() {
 		
-		BlackjackApp BA = new BlackjackApp();
-		int value = BA.getAllCardsValue(cards);
+		int value = dealer.allCardsValue();
 		
 		while (value < 21) {
 			if (value >= 17) {
 				break;
 			} else if (value < 17) {
-				deck.shuffle();
-				cards.add(deck.dealCard());
+				dealer.addCard(deck);
 			}
-			value = BA.getAllCardsValue(cards);
+			value = dealer.allCardsValue();
 		}
 		
-		return cards;
+		return dealer.getHand();
 	}
 	
-	public int getAllCardsValue(List<Card> cards) {
+	public void compareCards() {
 		
-		int sum = 0;
-		
-		for (Card card : cards) {
-			sum += card.getValue();
-		}
-		
-		return sum;
-	}
-	
-	public void compareCards(List<Card> user, List<Card> dealer) {
-		BlackjackApp BA = new BlackjackApp();
-		
-		if (BA.getAllCardsValue(user) > 21) {
+		if (user.allCardsValue() > 21) {
 			
-			BA.showHands(user, dealer);
+			BA.showHands();
 			System.out.println("You lost!");
 			System.out.println();
 			
-		} else if (BA.getAllCardsValue(user) == 21) {
+		} else if (user.allCardsValue() == 21) {
 			
-			BA.showHands(user, dealer);
+			BA.showHands();
 			System.out.println("You won!");
 			System.out.println();
 			
-		} else if (BA.getAllCardsValue(dealer) > 21) {
+		} else if (dealer.allCardsValue() > 21) {
 			
-			BA.showHands(user, dealer);
+			BA.showHands();
 			System.out.println("You won!");
 			System.out.println();
 		
-		} else if (BA.getAllCardsValue(dealer) == 21) {
+		} else if (dealer.allCardsValue() == 21) {
 			
-			BA.showHands(user, dealer);
+			BA.showHands();
 			System.out.println("You lost!");
 			System.out.println();
 		
-		} else if (BA.getAllCardsValue(user) > BA.getAllCardsValue(dealer)) {
+		} else if (user.allCardsValue() > dealer.allCardsValue()) {
 			
-			BA.showHands(user, dealer);
+			BA.showHands();
 			System.out.println("You won!");
 			System.out.println();
 			
-		} else if (BA.getAllCardsValue(dealer) > BA.getAllCardsValue(user)) {
+		} else if (dealer.allCardsValue() > user.allCardsValue()) {
 			
-			BA.showHands(user, dealer);
+			BA.showHands();
 			System.out.println("You lost!");
 			System.out.println();
 		
-		} else if (BA.getAllCardsValue(dealer) == BA.getAllCardsValue(user)) {
+		} else if (dealer.allCardsValue() == user.allCardsValue()) {
 			
-			BA.showHands(user, dealer);
+			BA.showHands();
 			System.out.println("Push!");
 			System.out.println();
 		
@@ -176,14 +203,16 @@ public class BlackjackApp {
 		
 	}
 	
-	public void showHands(List<Card> user, List<Card> dealer) {
-		BlackjackApp BA = new BlackjackApp();
-		
-		System.out.println("Dealer hand: " + dealer);
-		System.out.println("Dealer hand value = " + BA.getAllCardsValue(dealer));
+	public void showHands() {
+		System.out.println("========================================");
+		System.out.println("Dealer hand: " + dealer.getHand());
+		System.out.println("Dealer hand value = " + dealer.allCardsValue());
+		System.out.println("========================================");
 		System.out.println();
-		System.out.println("Your hand: " + user);
-		System.out.println("Hand value = " + BA.getAllCardsValue(user));
+		System.out.println("========================================");
+		System.out.println("Your hand: " + user.getHand());
+		System.out.println("Hand value = " + user.allCardsValue());
+		System.out.println("========================================");
 		System.out.println();
 	}
 
