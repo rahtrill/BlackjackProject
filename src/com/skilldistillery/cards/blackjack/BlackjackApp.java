@@ -45,11 +45,10 @@ public class BlackjackApp {
 			user.addCard(deck);
 
 			List<Card> dealerHand = dealer.getHand();
-			List<Card> userHand = user.getHand();
 
 			String dealerShows = ("Dealer hand: \n" + dealerHand.get(0) + " & [UNKNOWN CARD]");
-			userHand = BA.userCards(dealerShows);
-			dealerHand = BA.dealerCards();
+			BA.userCards(dealerShows);
+			BA.dealerCards();
 
 			BA.compareCards();
 
@@ -92,7 +91,7 @@ public class BlackjackApp {
 
 	}
 
-	public List<Card> userCards(String dealer) {
+	public void userCards(String dealer) {
 
 		// This method creates the boundaries for the user input and sets the rules for
 		// the user.
@@ -150,11 +149,9 @@ public class BlackjackApp {
 
 			value = user.allCardsValue();
 		}
-
-		return user.getHand();
 	}
 
-	public List<Card> dealerCards() {
+	public void dealerCards() {
 
 		// This method sets and enforces the rules for the dealer.
 
@@ -168,8 +165,6 @@ public class BlackjackApp {
 			}
 			value = dealer.allCardsValue();
 		}
-
-		return dealer.getHand();
 	}
 
 	public void compareCards() {
