@@ -31,8 +31,28 @@ The user can continue to play the game until they decide to quit the program.
 
 ## Lessons Learned
 
+Though instructed to craft this project in an Object Oriented Design, I decided to initially write this program procedural in the app class. This was to see if initially writing out my logic and conditions, followed by converting it to an Object Oriented Design later, would make it easier for me to create the program. I can now say that after completing this project, that approach was not the correct way of going about the program.
 
+Creating the program in a procedural way, and then trying to convert it to an Object Oriented Design made it difficult to refer to and delete methods that were redundant in the program. It made creating the other classes extremely tedious. This sort of approach is definitely a bit backwards, and I will not be approaching any other Object Oriented Design program with this sort of method again.
+
+It is best to map out what you're going to do with objects and their methods before trying to design the program's logic and conditionals.
 
 ## Technologies Used
 
+There were many technologies used for this program. This includes the following:
+
+- Inheritance.
+- Abstract classes.
+- Enums.
+- Switch/case statements.
+- Declarations for while loops.
+- Try/catch.
+- The Java utility, Scanner.
+- List/ArrayList.
+- Collections methods.
+- For loops.
+- If/else statements.
+
 ## What was the most difficult part of this project?
+
+The most difficult part of this program was the conversion of the procedural code to the Object Oriented Design code. As stated in lessons learned, I will not be using this method to write out OOD code in the future. It is imperative to stick to the UML design of the program and write your logic around the design, rather than trying to craft the design after completing the sequence.
