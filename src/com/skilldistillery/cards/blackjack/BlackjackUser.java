@@ -1,38 +1,38 @@
 package com.skilldistillery.cards.blackjack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.skilldistillery.cards.common.Card;
 import com.skilldistillery.cards.common.Deck;
 
-public class BlackjackUser {
-
-	private List<Card> userHand = new ArrayList<>();
+public class BlackjackUser extends BlackjackHand{
 	
-	public BlackjackUser() {}
+	public BlackjackUser() {super();}
 	
 	public void addCard(Deck deck) {
+		
+		// Shuffles the deck and adds a card to the user's hand.
+		
 		deck.shuffle();
-		userHand.add(deck.dealCard());
+		super.addHand(deck.dealCard());
 	}
 	
 	public List<Card> getHand() {
-		return this.userHand;
+		return super.getHand();
 	}
 	
 	public int allCardsValue() {
-		int sum = 0;
 		
-		for (Card card : userHand) {
-			sum += card.getValue();
-		}
+		// Gets the value of the user's hand.
 		
-		return sum;
+		return super.getHandValue();
 	}
 	
 	public void emptyHand() {
-		userHand.clear();
+		
+		// Removes everything from the user's hand.
+		
+		super.emptyHand();;
 	}
 	
 	
